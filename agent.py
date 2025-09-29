@@ -173,8 +173,6 @@ After receiving tool output, analyze the result and provide a helpful response.
 - Use dry-run when appropriate for safety
 - Provide clear explanations of what each command does
 - Follow Kubernetes best practices
-- Include error handling and fallback options
-- Be security-conscious (avoid exposing secrets, use RBAC properly)
 
 ## Examples of Tool Usage:
 
@@ -213,7 +211,11 @@ Response: I'll help you troubleshoot the pod issue.
 }}
 ```
 
-Remember: You are a production-grade Kubernetes agent. Prioritize reliability, security, and best practices in all operations."""
+Remember: You are a production-grade Kubernetes agent. Prioritize reliability, security, and best practices in all operations.
+
+MOST İMPORTANT RULE: ALWAYS RESPOND IN TURKISH
+
+"""
 
 def format_tools_description(tools: List[Tool]) -> str:
     """Format tools for inclusion in system prompt"""
@@ -719,7 +721,7 @@ class KubernetesAgentTester:
                 top_p=0.95,
                 top_k=50,
                 do_sample=True,
-                repetition_penalty=1.0,
+                repetition_penalty=1.05,
                 pad_token_id=tokenizer.pad_token_id,
                 eos_token_id=tokenizer.eos_token_id,
                 streamer=streamer,
