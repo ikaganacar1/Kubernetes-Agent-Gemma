@@ -17,7 +17,7 @@ from transformers import TextIteratorStreamer
 # ============== Model Configuration ==============
 print("Loading Kubernetes Agent Model...")
 model, tokenizer = FastLanguageModel.from_pretrained(
-    model_name="/home/ika/yzlm/llm/Kubex_Lmm_Finetune/gemma3-kubernetes-0.0.0/checkpoint-8175/",
+    model_name="gemma3-kubernetes-0.0.0/checkpoint-8175/",
     max_seq_length=4096,
     dtype=None,
     load_in_4bit=True,
