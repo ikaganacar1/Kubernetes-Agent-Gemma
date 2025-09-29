@@ -610,27 +610,6 @@ class AgentEvaluator:
             "metrics": {}
         }
         
-        # Check if expected tools were called
-        called_tools = [tc.get("tool") for tc in tool_calls]
-        expected_tools = scenario.get("expected_tools", [])
-        
-        result["metrics"]["tool_accuracy"] = len(set(called_tools) & set(expected_tools)) / max(len(expected_tools), 1)
-        
-        # Check if validation passes
-        validation_fn = scenario.get("validation", lambda x: True)
-        result["metrics"]["validation_passed"] = validation_fn(response)
-        
-        # Check response quality
-        result["metrics"]["has_reasoning"] = "will" in response.lower() or "going to" in response.lower()
-        result["metrics"]["has_tool_calls"] = len(tool_calls) > 0
-        
-        # Calculate overall score
-        result["metrics"]["score"] = (
-            result["metrics"]["tool_accuracy"] * 0.4 +
-            result["metrics"]["validation_passed"] * 0.3 +
-            result["metrics"]["has_reasoning"] * 0.2 +
-            result["metrics"]["has_tool_calls"] * 0.1
-        )
         
         self.results.append(result)
         return result
@@ -642,24 +621,14 @@ class AgentEvaluator:
         
         report = "## Agent Evaluation Report\n\n"
         
-        # Overall metrics
-        avg_score = sum(r["metrics"]["score"] for r in self.results) / len(self.results)
-        tool_accuracy = sum(r["metrics"]["tool_accuracy"] for r in self.results) / len(self.results)
-        validation_rate = sum(r["metrics"]["validation_passed"] for r in self.results) / len(self.results)
         
-        report += f"### Overall Performance\n"
-        report += f"- Average Score: {avg_score:.2%}\n"
-        report += f"- Tool Selection Accuracy: {tool_accuracy:.2%}\n"
-        report += f"- Validation Pass Rate: {validation_rate:.2%}\n\n"
-        
+ 
         # Per-scenario results
         report += "### Scenario Results\n"
         for result in self.results:
             report += f"\n**{result['scenario']}**\n"
-            report += f"- Score: {result['metrics']['score']:.2%}\n"
-            report += f"- Tool Accuracy: {result['metrics']['tool_accuracy']:.2%}\n"
-            report += f"- Validation: {'✓' if result['metrics']['validation_passed'] else '✗'}\n"
-            report += f"- Tools Called: {', '.join([tc.get('tool', 'unknown') for tc in result['tool_calls']])}\n"
+            report += f"- Prompt: {result['prompt']}\n"
+            report += f"- Tools Called: {result['tool_calls']}\n"
         
         return report
 
